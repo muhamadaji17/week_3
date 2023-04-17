@@ -53,3 +53,4 @@ import _users from  "./users.js";
 
 const models = initModels(sequelize)
 export default models
+export {sequelize}
