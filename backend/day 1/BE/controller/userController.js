@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt"
-import models from "../models/init-models.js"
+import models, {sequelize} from "../models/init-models.js"
 
 const CreateUser = async(req, res) => {
     try {
@@ -89,4 +89,31 @@ const DetailUser = async(req, res) => {
     }
 }
 
-export default {CreateUser, GetUsers, DeleteUser, UpdateUser, DetailUser}
+
+const messageHelper = (result, status, msg) => {
+  return{
+      result,
+      status,
+      msg
+  }
+}
+const CreateUserandCust = async (req, res) => {
+    try {
+      const salt = await bcrypt.genSalt(10);
+      const passHash = await bcrypt.hash(req.body.password, salt);
+      req.body.password = passHash;
+  
+      const data = `[${JSON.stringify(req.body)}]`;
+      const query = `CALL public.createCustAndUsers('${data}')`;
+      const result = await sequelize.query(query)
+  
+      // console.log(result)
+  
+      res.send(messageHelper(result, 200, "Success"))
+    } catch (error) {
+        res.send(messageHelper(error.message, 400, "Error"))
+    }
+  };
+  
+
+export default {CreateUser, GetUsers, DeleteUser, UpdateUser, DetailUser, CreateUserandCust}
