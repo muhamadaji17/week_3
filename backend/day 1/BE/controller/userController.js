@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt"
-import models, {sequelize} from "../models/init-models.js"
+import models, { sequelize } from "../models/init-models.js"
 
-const CreateUser = async(req, res) => {
+const CreateUser = async (req, res) => {
     try {
         const salt = await bcrypt.genSalt(10)
         const passHash = await bcrypt.hash(req.body.password, salt)
@@ -20,7 +20,7 @@ const CreateUser = async(req, res) => {
     }
 }
 
-const GetUsers = async(req,res) => {
+const GetUsers = async (req, res) => {
     try {
         const data = await models.users.findAll()
 
@@ -34,12 +34,12 @@ const GetUsers = async(req,res) => {
     }
 }
 
-const UpdateUser = async(req,res) => {
+const UpdateUser = async (req, res) => {
     try {
         const data = await models.users.update({
-                username: req.body.username,
-                password: req.body.password
-        },{
+            username: req.body.username,
+            password: req.body.password
+        }, {
             where: {
                 id: req.params.id
             }
@@ -49,14 +49,14 @@ const UpdateUser = async(req,res) => {
             data
         })
     } catch (error) {
-        
+
     }
 }
 
-const DeleteUser = async(req,res) => {
+const DeleteUser = async (req, res) => {
     try {
         const data = await models.users.destroy({
-            where :{
+            where: {
                 id: req.params.id
             }
         })
@@ -70,10 +70,10 @@ const DeleteUser = async(req,res) => {
     }
 }
 
-const DetailUser = async(req, res) => {
+const DetailUser = async (req, res) => {
     try {
         const data = await models.users.findOne({
-            where:{
+            where: {
                 id: req.params.id
             }
         })
@@ -82,38 +82,39 @@ const DetailUser = async(req, res) => {
             status: 404,
             data
         })
-        
+
     } catch (error) {
-        
+
         res.status(404).send(error)
     }
 }
 
 
 const messageHelper = (result, status, msg) => {
-  return{
-      result,
-      status,
-      msg
-  }
+    return {
+        result,
+        status,
+        msg
+    }
 }
 const CreateUserandCust = async (req, res) => {
     try {
-      const salt = await bcrypt.genSalt(10);
-      const passHash = await bcrypt.hash(req.body.password, salt);
-      req.body.password = passHash;
-  
-      const data = `[${JSON.stringify(req.body)}]`;
-      const query = `CALL public.createCustAndUsers('${data}')`;
-      const result = await sequelize.query(query)
-  
-      // console.log(result)
-  
-      res.send(messageHelper(result, 200, "Success"))
+        const salt = await bcrypt.genSalt(10);
+        const passHash = await bcrypt.hash(req.body.password, salt);
+        req.body.password = passHash;
+
+        const data = `[${JSON.stringify(req.body)}]`;
+        const query = `CALL public.createcustandusers('${data}')`;
+        const result = await sequelize.query(query)
+
+        // console.log(result)
+
+        res.send(messageHelper(result, 200, "Success"))
     } catch (error) {
         res.send(messageHelper(error.message, 400, "Error"))
     }
-  };
-  
+};
 
-export default {CreateUser, GetUsers, DeleteUser, UpdateUser, DetailUser, CreateUserandCust}
+
+export default { CreateUser, GetUsers, DeleteUser, UpdateUser, DetailUser, CreateUserandCust }
+
